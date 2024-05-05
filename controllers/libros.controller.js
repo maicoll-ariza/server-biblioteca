@@ -1,8 +1,9 @@
-const librosModel = require("../models/libros.model");
 const LibrosModel = require("../models/libros.model");
+const ReservasModel = require("../models/reservas.model");
+const FavoritosModel = require("../models/favoritos.model");
 
 const obtenerLibros = async (req, res) => {
-  const { titulo, autor } = req.body;
+  const { titulo, autor, usuario } = req.body;
 
   const regexTitulo = titulo ? new RegExp(titulo, "i") : /.*/;
   const regexAutor = autor ? new RegExp(autor, "i") : /.*/;
@@ -14,11 +15,37 @@ const obtenerLibros = async (req, res) => {
     if (titulo || autor) {
       query.$or = [{ titulo: regexTitulo }, { autor: regexAutor }];
     }
-    const libros = await LibrosModel.find(query);
+
+    const [libros, reservasPorUsuario, favoritosPorUsuario] = await Promise.all(
+      [
+        await LibrosModel.find(query),
+        await ReservasModel.find({ idUsuario: usuario }, "idUsuario idLibro"),
+        await FavoritosModel.find({ usuario }),
+      ]
+    );
+
+    const listadoLibrosInfo = libros.map((libro) => {
+      const libroObjeto = libro.toObject(); // Convertimos el objeto de mongoose a un objeto JSON
+      libroObjeto.reservadoPorUsuario = reservasPorUsuario.some(
+        (reserva) =>
+          reserva.idUsuario === usuario &&
+          reserva.idLibro.toString() === libro._id.toString()
+      );
+      libroObjeto.esFavorito = favoritosPorUsuario.some(
+        (favorito) =>
+          favorito.usuario === usuario &&
+          favorito.libro.toString() === libro._id.toString()
+      );
+      delete libroObjeto.__v;
+      return libroObjeto;
+    });
 
     res.json({
       ok: true,
-      libros,
+      // libros,
+      listadoLibrosInfo,
+      // reservasPorUsuario,
+      // favoritosPorUsuario
     });
   } catch (error) {
     console.error(error);
@@ -52,8 +79,7 @@ actualizarLibro = async (req, res) => {
   const { id, ...body } = req.body;
 
   try {
-
-    const libroDB = await librosModel.findById(id);
+    const libroDB = await LibrosModel.findById(id);
     if (!libroDB) {
       res.status(404).json({
         ok: false,
@@ -83,7 +109,7 @@ eliminarLibro = async (req, res) => {
   const { id } = req.body;
 
   try {
-    const libroDB = await librosModel.findById(id);
+    const libroDB = await LibrosModel.findById(id);
     if (!libroDB) {
       res.status(404).json({
         ok: false,
@@ -97,16 +123,14 @@ eliminarLibro = async (req, res) => {
       ok: true,
       message: "Libro eliminado correctamente",
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({
       ok: false,
       error,
     });
   }
-}
-
+};
 
 module.exports = {
   obtenerLibros,

@@ -19,7 +19,7 @@ const obtenerFavoritos = async (req, res) => {
   }
 };
 
-const agregarFavorito = async (req, res) => {
+const modificarRegistroFavoritos = async (req, res) => {
   const { libro, usuario } = req.body;
 
   try {
@@ -32,12 +32,22 @@ const agregarFavorito = async (req, res) => {
       return;
     }
 
-    const favorito = new FavoritoModel({ libro, usuario });
-    await favorito.save();
+    let message = "";
+    let favorito;
+
+    const registroExistente = await FavoritoModel.findOne({ libro, usuario });
+    if (registroExistente) {
+      await FavoritoModel.findByIdAndDelete(registroExistente._id);
+      message = "Libro eliminado de favoritos correctamente";
+    } else {
+      const favorito = new FavoritoModel({ libro, usuario });
+      await favorito.save();
+      message = "Libro agregado a favoritos correctamente";
+    }
 
     res.json({
       ok: true,
-      message: "Libro agregado a favoritos correctamente",
+      message,
       favorito,
     });
   } catch (error) {
@@ -49,36 +59,36 @@ const agregarFavorito = async (req, res) => {
   }
 };
 
-const eliminarFavorito = async (req, res) => {
-  const { id } = req.body;
+// const eliminarFavorito = async (req, res) => {
+//   const { id } = req.body;
 
-  try {
-    const favoritoDB = await FavoritoModel.findById(id);
-    if (!favoritoDB) {
-      res.status(404).json({
-        ok: false,
-        message: "El favorito que intenta eliminar no existe",
-      });
-      return;
-    }
+//   try {
+//     const favoritoDB = await FavoritoModel.findById(id);
+//     if (!favoritoDB) {
+//       res.status(404).json({
+//         ok: false,
+//         message: "El favorito que intenta eliminar no existe",
+//       });
+//       return;
+//     }
 
-    await FavoritoModel.findByIdAndDelete(id);
+//     await FavoritoModel.findByIdAndDelete(id);
 
-    res.json({
-      ok: true,
-      message: "Favorito eliminado correctamente",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      error,
-    });
-  }
-};
+//     res.json({
+//       ok: true,
+//       message: "Favorito eliminado correctamente",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       ok: false,
+//       error,
+//     });
+//   }
+// };
 
 module.exports = {
   obtenerFavoritos,
-  agregarFavorito,
-  eliminarFavorito,
+  modificarRegistroFavoritos,
+  // eliminarFavorito,
 };

@@ -11,7 +11,10 @@ const {
 
 const router = Router();
 
-router.get("/libros", [], obtenerLibros);
+router.get("/libros", [
+  check("usuario").notEmpty().withMessage("El usuario es requerido"),
+  validarCampos
+], obtenerLibros);
 
 router.post(
   "/libros/crear",

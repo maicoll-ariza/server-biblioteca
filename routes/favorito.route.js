@@ -5,8 +5,8 @@ const { validarCampos } = require("../middlewares/validar-campos");
 
 const {
   obtenerFavoritos,
-  agregarFavorito,
-  eliminarFavorito,
+  modificarRegistroFavoritos,
+//   eliminarFavorito,
 } = require("../controllers/favoritos.controller");
 
 const router = Router();
@@ -16,15 +16,15 @@ router.get('/obtenerPorUsuario', [
     validarCampos
 ], obtenerFavoritos);
 
-router.post('/agregar', [
+router.post('/modificar', [
     check('libro', 'El libro es obligatorio').not().isEmpty(),
     check('usuario', 'El usuario es obligatorio').not().isEmpty(),
     validarCampos
-], agregarFavorito);
+], modificarRegistroFavoritos);
 
-router.delete('/eliminar', [
-    check('id', 'El id es obligatorio').not().isEmpty(),
-    validarCampos
-], eliminarFavorito);
+// router.delete('/eliminar', [
+//     check('id', 'El id es obligatorio').not().isEmpty(),
+//     validarCampos
+// ], eliminarFavorito);
 
 module.exports = router;
