@@ -26,7 +26,7 @@ const modificarReserva = async (req, res) => {
     if (!libroDB) {
       return res.status(404).json({
         ok: false,
-        message: "El libro que intenta reservar no existe",
+        message: "El libro no existe",
       });
     }
 
@@ -49,7 +49,7 @@ const modificarReserva = async (req, res) => {
       await reserva.save();
       message = "Libro reservado correctamente";
     }
-    libroDB.disponible = reserva ? false : true
+    libroDB.disponible = reserva ? false : true;
     await libroDB.save();
 
     res.json({
@@ -65,7 +65,6 @@ const modificarReserva = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   getReservas,
