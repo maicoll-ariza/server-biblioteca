@@ -11,7 +11,7 @@ const {
 
 const router = Router();
 
-router.get("/libros", [
+router.post("/libros", [
   check("usuario").notEmpty().withMessage("El usuario es requerido"),
   validarCampos
 ], obtenerLibros);
@@ -40,6 +40,9 @@ router.put(
   actualizarLibro
 );
 
-router.delete("/libros/eliminar", [], eliminarLibro);
+router.post("/libros/eliminar", [
+  check("id", "El id es obligatorio").not().isEmpty(),
+  validarCampos,
+], eliminarLibro);
 
 module.exports = router;
