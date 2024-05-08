@@ -1,6 +1,5 @@
 const ReservasModel = require("../models/reservas.model");
 const LibrosModel = require("../models/libros.model");
-const reservasModel = require("../models/reservas.model");
 
 const getReservas = async (req, res) => {
   try {

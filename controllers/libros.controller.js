@@ -88,7 +88,7 @@ actualizarLibro = async (req, res) => {
       return;
     }
 
-    if(libroDB.disponible === false) {
+    if (libroDB.disponible === false) {
       res.status(404).json({
         ok: false,
         message: "No se puede actualizar un libro que está reservado",
@@ -126,7 +126,7 @@ eliminarLibro = async (req, res) => {
       return;
     }
 
-    if(libroDB.disponible === false) {
+    if (libroDB.disponible === false) {
       res.status(404).json({
         ok: false,
         message: "No se puede eliminar un libro que está reservado",
