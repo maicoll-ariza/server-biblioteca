@@ -88,6 +88,14 @@ actualizarLibro = async (req, res) => {
       return;
     }
 
+    if(libroDB.disponible === false) {
+      res.status(404).json({
+        ok: false,
+        message: "No se puede actualizar un libro que está reservado",
+      });
+      return;
+    }
+
     const libro = await LibrosModel.findByIdAndUpdate(id, body, {
       new: true, // devuelve el documento actualizado
     });
@@ -114,6 +122,14 @@ eliminarLibro = async (req, res) => {
       res.status(404).json({
         ok: false,
         message: "El libro que intenta eliminar no existe",
+      });
+      return;
+    }
+
+    if(libroDB.disponible === false) {
+      res.status(404).json({
+        ok: false,
+        message: "No se puede eliminar un libro que está reservado",
       });
       return;
     }
