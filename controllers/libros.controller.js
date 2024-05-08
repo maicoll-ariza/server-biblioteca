@@ -42,10 +42,7 @@ const obtenerLibros = async (req, res) => {
 
     res.json({
       ok: true,
-      // libros,
       listadoLibrosInfo,
-      // reservasPorUsuario,
-      // favoritosPorUsuario
     });
   } catch (error) {
     console.error(error);

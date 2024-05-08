@@ -11,10 +11,14 @@ const {
 
 const router = Router();
 
-router.post("/libros", [
-  check("usuario").notEmpty().withMessage("El usuario es requerido"),
-  validarCampos
-], obtenerLibros);
+router.post(
+  "/libros",
+  [
+    check("usuario").notEmpty().withMessage("El usuario es requerido"),
+    validarCampos,
+  ],
+  obtenerLibros
+);
 
 router.post(
   "/libros/crear",
@@ -40,9 +44,10 @@ router.put(
   actualizarLibro
 );
 
-router.post("/libros/eliminar", [
-  check("id", "El id es obligatorio").not().isEmpty(),
-  validarCampos,
-], eliminarLibro);
+router.post(
+  "/libros/eliminar",
+  [check("id", "El id es obligatorio").notEmpty(), validarCampos],
+  eliminarLibro
+);
 
 module.exports = router;
