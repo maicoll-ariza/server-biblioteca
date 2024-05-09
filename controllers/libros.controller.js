@@ -2,6 +2,8 @@ const LibrosModel = require("../models/libros.model");
 const ReservasModel = require("../models/reservas.model");
 const FavoritosModel = require("../models/favoritos.model");
 
+// TODO: Eliminar registros en reservas y favoritos cuando se elimine un libro.
+
 const obtenerLibros = async (req, res) => {
   const { titulo, autor, usuario } = req.body;
 
@@ -129,6 +131,18 @@ eliminarLibro = async (req, res) => {
         message: "No se puede eliminar un libro que está reservado",
       });
       return;
+    }
+    const [reserva, favorito] = await Promise.all([
+      ReservasModel.findOne({ idLibro: id }),
+      FavoritosModel.findOne({ libro: id }),
+    ]);
+
+    if (reserva) {
+      await ReservasModel.findByIdAndDelete(reserva._id);
+    }
+
+    if (favorito) {
+      await FavoritosModel.findByIdAndDelete(favorito._id);
     }
 
     await LibrosModel.findByIdAndDelete(id);

@@ -3,7 +3,7 @@ const LibrosModel = require("../models/libros.model");
 
 const getReservas = async (req, res) => {
   try {
-    const reservas = await ReservasModel.find();
+    const reservas = await ReservasModel.find().populate("idLibro", "titulo");
     res.json({
       ok: true,
       reservas,
