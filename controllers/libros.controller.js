@@ -2,7 +2,6 @@ const LibrosModel = require("../models/libros.model");
 const ReservasModel = require("../models/reservas.model");
 const FavoritosModel = require("../models/favoritos.model");
 
-// TODO: Eliminar registros en reservas y favoritos cuando se elimine un libro.
 
 const obtenerLibros = async (req, res) => {
   const { titulo, autor, usuario } = req.body;
@@ -40,6 +39,17 @@ const obtenerLibros = async (req, res) => {
       );
       delete libroObjeto.__v;
       return libroObjeto;
+    });
+
+    // ordenar libros por favoritos
+    listadoLibrosInfo.sort((a, b) => {
+      if (a.esFavorito && !b.esFavorito) {
+        return -1;
+      } else if (!a.esFavorito && b.esFavorito) {
+        return 1;
+      } else {
+        return 0;
+      }
     });
 
     res.json({
